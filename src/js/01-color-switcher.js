@@ -9,21 +9,27 @@ startBtn.addEventListener("click", startChangeColor);
 stopBtn.addEventListener("click", stopChangeColor);
 
 function startChangeColor() {
-    startBtn.setAttribute("disabled", "disabled");
-    stopBtn.removeAttribute("disabled");
-    intervalId = setInterval(() => body.style.backgroundColor = getRandomHexColor(), 1000);
-    return intervalId
+  setDisabled(startBtn);
+  removeDisabled(stopBtn);
+  intervalId = setInterval(() => body.style.backgroundColor = getRandomHexColor(), 1000);
+  return intervalId
 
 }
 
 function stopChangeColor() {
-    stopBtn.setAttribute("disabled", "disabled");
-    startBtn.removeAttribute("disabled");
-    clearInterval(intervalId);
+  setDisabled(stopBtn);
+  removeDisabled(startBtn);
+  clearInterval(intervalId);
 }
 
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 }
 
+function setDisabled(btn) {
+  btn.setAttribute("disabled", "disabled");
+}
 
+function removeDisabled(btn) {
+  btn.removeAttribute("disabled");
+}

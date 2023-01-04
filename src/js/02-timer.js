@@ -26,10 +26,10 @@ const options = {
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-    onClose(selectedDates) {
-        if (selectedDates[0] > options.defaultDate) {
+    onClose([selectedDates]) {
+        if (selectedDates > Date.now()) {
             startBtn.removeAttribute("disabled");
-            selectedDay = selectedDates[0];
+            selectedDay = selectedDates;
         } else {
             Notiflix.Notify.warning("Please choose a date in the future");
         };
@@ -40,16 +40,25 @@ flatpickr(input, options);
 
 function startCount() {
     timerId = setInterval(function () {
-        let dataObject = convertMs(selectedDay - new Date());
-        dataDays.textContent = dataObject.days.toString().padStart(2, '0');
-        dataHours.textContent = dataObject.hours.toString().padStart(2, '0');
-        dataMinutes.textContent = dataObject.minutes.toString().padStart(2, '0');
-        dataSeconds.textContent = dataObject.seconds.toString().padStart(2, '0');
-        if (dataObject.days <= 0 && dataObject.hours <= 0 && dataObject.minutes <= 0 && dataObject.seconds <= 0) {
-        clearInterval(timerId);
+        let secondsDiff = (selectedDay - Date.now());
+        let dataObject = convertMs(secondsDiff);
+        dataTextContentUpdate(dataObject);
+        if (secondsDiff < 1000) {
+            clearInterval(timerId);
         return;
-    }
+        }
     }, 1000);
+}
+
+function dataTextContentUpdate(object) {
+    dataDays.textContent = addLeadingZero(object.days);
+    dataHours.textContent = addLeadingZero(object.hours);
+    dataMinutes.textContent = addLeadingZero(object.minutes);
+    dataSeconds.textContent = addLeadingZero(object.seconds);
+}
+
+function addLeadingZero(value) {
+    return value.toString().padStart(2, '0');
 }
 
 function convertMs(ms) {
@@ -70,8 +79,4 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
 
